@@ -530,7 +530,22 @@ CREATE TABLE suppliers (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL
     os.replace(tmp, DB_PATH)
 
 
-if not _os.path.exists(DB_PATH):
+def _demo_db_ready():
+    import sqlite3
+    if not _os.path.exists(DB_PATH):
+        return False
+    try:
+        con = sqlite3.connect(DB_PATH)
+        ok = con.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='products'"
+        ).fetchone()
+        con.close()
+        return bool(ok)
+    except Exception:
+        return False
+
+
+if not _demo_db_ready():
     reset_demo_database()
 
 with st.sidebar:
